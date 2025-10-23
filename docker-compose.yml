@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  db_bautista:
+    image: postgres:15
+    container_name: db_bautista
+    restart: unless-stopped
+    env_file: 
+      - .env.db
+    environment:
+      POSTGRES_USER: hannia_user
+      POSTGRES_PASSWORD: HanniaStrongP@ssw0rd
+      POSTGRES_DB: hannia_bautista_db
+    volumes:
+      - db_bautista_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - appnet
+
+  backend_bautista:
+    build:
+      context: ./backend-bautista
+      dockerfile: Dockerfile
+    container_name: backend_bautista
+    restart: unless-stopped
+    depends_on:
+      - db_bautista
+    env_file:
+      - .env.backend
+    environment:
+      DB_HOST: db_bautista
+      DB_PORT: 5432
+      DB_USER: hannia_user
+      DB_PASSWORD: HanniaStrongP@ssw0rd
+      DB_NAME: hannia_bautista_db
+    ports:
+      - "5000:5000"
+    networks:
+      - appnet
+
+  frontend_hannia:
+    build:
+      context: ./frontend-hannia
+      dockerfile: Dockerfile
+    container_name: frontend_hannia
+    restart: unless-stopped
+    depends_on:
+      - backend_bautista
+    environment:
+      REACT_APP_API_URL: http://backend_bautista:5000
+    ports:
+      - "3000:3000"
+    networks:
+      - appnet
+
+volumes:
+  db_bautista_data:
+
+networks:
+  appnet:
+    driver: bridge
