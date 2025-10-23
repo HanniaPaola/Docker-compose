@@ -2,10 +2,11 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
+// Servir los archivos estáticos de build
 app.use(express.static(path.join(__dirname, 'build')));
 
+// Proxy opcional hacia backend
 app.get('/api/proxy/items', async (req, res) => {
-  // Proxy simple hacia el backend por nombre de servicio en la red de compose
   const apiUrl = (process.env.REACT_APP_API_URL || 'http://backend_bautista:5000') + '/items';
   try {
     const fetch = await import('node-fetch').then(m => m.default);
@@ -18,7 +19,8 @@ app.get('/api/proxy/items', async (req, res) => {
   }
 });
 
-app.get('*', (req, res) =>
+// Todas las demás rutas cargan index.html
+app.get('/*', (req, res) =>
   res.sendFile(path.join(__dirname, 'build', 'index.html'))
 );
 
