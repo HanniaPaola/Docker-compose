@@ -1,13 +1,18 @@
-# Etapa de construcción (si necesitáramos transpilar)
+# Build stage
 FROM node:18-slim AS build
 WORKDIR /app
+
+# Copiar package.json y instalar dependencias
 COPY package.json ./
 RUN npm install --omit=dev
+
+# Copiar todo el código
 COPY . .
 
-# Imagen final (ligera por usar slim)
+# Final stage
 FROM node:18-slim
 WORKDIR /app
 COPY --from=build /app /app
+
 EXPOSE 5000
 CMD ["node", "index.js"]

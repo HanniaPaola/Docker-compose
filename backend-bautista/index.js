@@ -1,19 +1,22 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { Pool } = require('pg');
+const mysql = require('mysql2/promise');
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Variables de entorno para conexión (vienen desde docker-compose)
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
+// Conexión a MySQL usando variables de entorno
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || 'db_bautista',
+  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306,
   user: process.env.DB_USER || 'hannia_user',
-  password: process.env.DB_PASSWORD || 'HanniaStrongP@ssw0rd',
-  database: process.env.DB_NAME || 'hannia_bautista_db'
+  password: process.env.DB_PASSWORD || 'hannia',
+  database: process.env.DB_NAME || 'hannia_bautista_db',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 // Endpoint con tu apellido que retorna tu nombre completo
@@ -22,34 +25,39 @@ app.get('/bautista', (req, res) => {
 });
 
 // CRUD simple para items
+
+// GET all items
 app.get('/items', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM items ORDER BY id');
-    res.json(result.rows);
+    const [rows] = await pool.query('SELECT * FROM items ORDER BY id');
+    res.json(rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error leyendo items' });
   }
 });
 
+// POST new item
 app.post('/items', async (req, res) => {
   const { name, description } = req.body;
   try {
-    const result = await pool.query(
-      'INSERT INTO items (name, description) VALUES ($1, $2) RETURNING *',
+    const [result] = await pool.query(
+      'INSERT INTO items (name, description) VALUES (?, ?)',
       [name, description]
     );
-    res.status(201).json(result.rows[0]);
+    const [rows] = await pool.query('SELECT * FROM items WHERE id = ?', [result.insertId]);
+    res.status(201).json(rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error insertando item' });
   }
 });
 
+// DELETE item by id
 app.delete('/items/:id', async (req, res) => {
   const id = req.params.id;
   try {
-    await pool.query('DELETE FROM items WHERE id = $1', [id]);
+    await pool.query('DELETE FROM items WHERE id = ?', [id]);
     res.status(204).send();
   } catch (err) {
     console.error(err);

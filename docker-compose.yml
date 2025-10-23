@@ -2,20 +2,19 @@ version: "3.8"
 
 services:
   db_bautista:
-    image: postgres:15
+    image: mysql:8
     container_name: db_bautista
     restart: unless-stopped
-    env_file: 
-      - .env.db
     environment:
-      POSTGRES_USER: hannia_user
-      POSTGRES_PASSWORD: HanniaStrongP@ssw0rd
-      POSTGRES_DB: hannia_bautista_db
+      MYSQL_ROOT_PASSWORD: HanniaStrongP@ssw0rd
+      MYSQL_DATABASE: hannia_bautista_db
+      MYSQL_USER: hannia_user
+      MYSQL_PASSWORD: hannia
     volumes:
-      - db_bautista_data:/var/lib/postgresql/data
+      - db_bautista_data:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "5432:5432"
+      - "3306:3306"
     networks:
       - appnet
 
@@ -27,13 +26,11 @@ services:
     restart: unless-stopped
     depends_on:
       - db_bautista
-    env_file:
-      - .env.backend
     environment:
       DB_HOST: db_bautista
-      DB_PORT: 5432
+      DB_PORT: 3306
       DB_USER: hannia_user
-      DB_PASSWORD: HanniaStrongP@ssw0rd
+      DB_PASSWORD: hannia
       DB_NAME: hannia_bautista_db
     ports:
       - "5000:5000"
@@ -61,3 +58,4 @@ volumes:
 networks:
   appnet:
     driver: bridge
+  
