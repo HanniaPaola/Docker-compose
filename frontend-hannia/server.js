@@ -19,10 +19,10 @@ app.get('/api/proxy/items', async (req, res) => {
   }
 });
 
-// Todas las demás rutas cargan index.html
-app.get('/*', (req, res) =>
-  res.sendFile(path.join(__dirname, 'build', 'index.html'))
-);
+// 👇 Esta línea es la clave: usa "app.use" en lugar de "app.get('*')"
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Frontend estático en puerto ${PORT}`));
+app.listen(PORT, () => console.log(`Frontend sirviendo en puerto ${PORT}`));
