@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=build /app/build ./build
 COPY server.js ./server.js
 COPY package*.json ./
-RUN npm install express
+RUN npm install express node-fetch
 
 EXPOSE 3000
 CMD ["node", "server.js"]
