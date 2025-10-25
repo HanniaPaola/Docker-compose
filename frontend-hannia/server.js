@@ -81,10 +81,8 @@ app.delete('/api/proxy/items/:id', async (req, res) => {
   }
 });
 
-// Catch-all: servir React (CORREGIDO)
-app.get('/*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Frontend sirviendo en puerto ${PORT}`));
