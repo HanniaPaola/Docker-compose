@@ -19,12 +19,10 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Endpoint con tu apellido que retorna tu nombre completo
+// Endpoint con apellido
 app.get('/bautista', (req, res) => {
   res.json({ fullName: "Hannia Paola De Los Santos Bautista" });
 });
-
-// CRUD simple para items
 
 // GET all items
 app.get('/items', async (req, res) => {
@@ -50,6 +48,20 @@ app.post('/items', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error insertando item' });
+  }
+});
+
+// PUT update item
+app.put('/items/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, description } = req.body;
+  try {
+    await pool.query('UPDATE items SET name = ?, description = ? WHERE id = ?', [name, description, id]);
+    const [rows] = await pool.query('SELECT * FROM items WHERE id = ?', [id]);
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error actualizando item' });
   }
 });
 

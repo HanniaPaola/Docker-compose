@@ -5,7 +5,6 @@ const app = express();
 // Servir los archivos estáticos de build
 app.use(express.static(path.join(__dirname, 'build')));
 
-// Proxy opcional hacia backend
 app.get('/api/proxy/items', async (req, res) => {
   const apiUrl = (process.env.REACT_APP_API_URL || 'http://backend_bautista:5000') + '/items';
   try {
@@ -19,7 +18,6 @@ app.get('/api/proxy/items', async (req, res) => {
   }
 });
 
-// 👇 Esta línea es la clave: usa "app.use" en lugar de "app.get('*')"
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });

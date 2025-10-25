@@ -1,22 +1,19 @@
-# Docker Compose - Microservicios (Hannia Bautista)
+# Proyecto: Docker Compose - Microservicios
+Alumno: Hannia Paola De Los Santos Bautista
 
-## Resumen
-Este proyecto implementa una arquitectura de microservicios usando Docker Compose:
-- **Frontend**: React (servido por un servidor Node propio).
-- **Backend**: Node.js + Express (CRUD contra PostgreSQL).
-- **Base de datos**: PostgreSQL con volumen persistente.
+## Descripción
+Arquitectura de microservicios con Docker Compose: frontend (React + Express), backend (Node.js API) y base de datos (MySQL) con persistencia por volumen.
 
-> El nombre del contenedor y la DB contienen mi nombre/apellido: `hannia` / `bautista`.  
-> Endpoint especial: `GET /bautista` devuelve `Hannia Paola De Los Santos Bautista`.
+## Servicios
+- **frontend_hannia**: React app compilada y servida por Express. Puerto 3000.
+- **backend_bautista**: API en Node.js que expone endpoints CRUD y el endpoint `/bautista`. Puerto 5000.
+- **db_bautista**: MySQL con volumen `db_bautista_data`. Puerto 3306.
 
-## Arquitectura (diagrama mermaid)
-```mermaid
-flowchart LR
-  subgraph Network_appnet
-    F[Frontend - frontend_hannia (3000)]
-    B[Backend - backend_bautista (5000)]
-    DB[Postgres - db_bautista (5432)]
-  end
+## Requisitos
+- Docker & Docker Compose instalados.
 
-  F -->|HTTP (fetch)| B
-  B -->|SQL| DB
+## Levantar entorno
+```bash
+git clone <https://github.com/HanniaPaola/Docker-compose.git>
+cd Docker-compose
+docker-compose up --build -d
