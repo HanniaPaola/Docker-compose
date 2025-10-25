@@ -81,8 +81,8 @@ app.delete('/api/proxy/items/:id', async (req, res) => {
   }
 });
 
-// Catch-all: servir React
-app.get('*', (req, res) => {
+// Catch-all: servir React (CORREGIDO)
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
