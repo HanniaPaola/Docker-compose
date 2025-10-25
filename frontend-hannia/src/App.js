@@ -7,7 +7,7 @@ function App() {
   const [newItem, setNewItem] = useState({ name: '', description: '' });
   const [editingItem, setEditingItem] = useState(null);
 
-  const apiBase = process.env.REACT_APP_API_URL || 'http://backend_bautista:5000';
+  const apiBase = process.env.REACT_APP_API_URL || 'http://backend_bautista:5000'
 
   // Cargar items
   const loadItems = async () => {
@@ -61,7 +61,9 @@ function App() {
   return (
     <div className="container">
       <header>
-        <h1>Proyecto Docker Compose - Microservicios</h1>
+      <h1>Proyecto Docker Compose - Microservicios</h1>
+      <h2>Alumno: Hannia Paola De Los Santos Bautista</h2>
+      <h3>Endpoint /bautista respondió:</h3>
         <h2>Alumno: {fullName}</h2>
       </header>
 

@@ -1,16 +1,24 @@
 # Stage build
 FROM node:18-slim as build
 WORKDIR /app
-COPY package.json package-lock.json ./
+
+# Copiar package.json y lock
+COPY package*.json ./
 RUN npm ci
-COPY . .
+
+# Copiar todo el código y generar build
+COPY . ./
 RUN npm run build
 
-# Stage final: servidor express para servir static (evita nginx, usamos nuestro propio servidor)
+# Stage final: servidor Express para servir static
 FROM node:18-slim
 WORKDIR /app
+
+# Copiar el build completo y server.js
 COPY --from=build /app/build ./build
-COPY server.js .
-RUN npm init -y && npm i express
+COPY server.js ./server.js
+COPY package*.json ./
+RUN npm install express
+
 EXPOSE 3000
 CMD ["node", "server.js"]
